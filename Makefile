@@ -1,5 +1,13 @@
-all: compile link
+CC=g++
+SFML_LIBS=-lsfml-graphics -lsfml-window -lsfml-system
 
-compile: g++ -c snakes.cpp
+all: sfml-app
 
-linking: g++ snakes.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
+sfml-app: snakes.o
+	$(CC) snakes.o -o sfml-app $(SFML_LIBS)
+
+snakes.o: snakes.cpp
+	$(CC) -c snakes.cpp
+
+clean:
+	rm -f sfml-app *.o
