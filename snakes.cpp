@@ -1,10 +1,12 @@
 #include <SFML/Graphics.hpp>
+#include <chrono>
+
+using namespace std;
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(500, 500), "Snakes and Ladders");
-
-    // Create the squares
+	srand(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
     const int numSquares = 100;
     const int squareSize = 50;
     sf::RectangleShape squares[numSquares];
@@ -20,7 +22,6 @@ int main()
         }
     }
 
-    // Create the font and text objects
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
         return EXIT_FAILURE;
@@ -54,6 +55,14 @@ int main()
     lines[2].color = sf::Color::Green;
     lines[3].color = sf::Color::Green;
 
+
+    sf::CircleShape playerDot(squareSize / 4.f);
+    playerDot.setFillColor(sf::Color::Black);
+    playerDot.setPosition(squares[0].getPosition().x + squareSize / 2.f,
+                           squares[0].getPosition().y + squareSize / 2.f);
+
+    int playerPosition = 0;
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -61,6 +70,14 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            // Move the player
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
+                int diceRoll = std::rand() % 6 + 1; 
+                playerPosition += diceRoll;        
+                sf::Vector2f newPosition = squares[playerPosition].getPosition() + sf::Vector2f(squareSize / 2.f, squareSize / 2.f);
+                playerDot.setPosition(newPosition);
+            }
         }
 
         window.clear();
@@ -70,6 +87,7 @@ int main()
             window.draw(numbers[i]);
         }
         window.draw(lines);
+        window.draw(playerDot);
         window.display();
     }
 
