@@ -237,6 +237,7 @@ int main()
 					message.setPosition(150, 220);
 					window.draw(message);
 					window.display();
+                    sf::sleep(sf::milliseconds(3000));
                     window.close();
                 }
 				lastTurnText.setString(lastTurnInfo);
