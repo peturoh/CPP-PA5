@@ -69,6 +69,12 @@ int main()
             squares[i].setFillColor(sf::Color(200, 200, 200));
         }
     }
+  
+    sf::Texture texture;
+    texture.loadFromFile("assets/snakesladders.png");
+    
+    sf::Sprite boardSprite;
+    boardSprite.setTexture(texture);
 
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
@@ -198,7 +204,7 @@ int main()
                 if(playerPosition == 99){
                 	drawPlayer(window, playerDot, squares, squareSize, playerPosition);
                 	sf::Text message("Player 1 won!", font, 36);
-					message.setFillColor(sf::Color::Red);
+					message.setFillColor(sf::Color::Blue);
 					message.setPosition(150,220);
 					window.draw(message);
 					window.display();
@@ -233,7 +239,7 @@ int main()
                 if(player2Position == 99){
                 	drawPlayer(window, playerDot2, squares, squareSize, player2Position);
                 	sf::Text message("Player 2 won!", font, 36);
-					message.setFillColor(sf::Color::Red);
+					message.setFillColor(sf::Color::Blue);
 					message.setPosition(150, 220);
 					window.draw(message);
 					window.display();
@@ -248,13 +254,15 @@ int main()
         }
         
         window.clear();
-        
         for (int i = 0; i < numSquares; i++) {
             window.draw(squares[i]);
+        }
+        window.draw(boardSprite);
+        for (int i = 0; i < numSquares; i++) {
             window.draw(numbers[i]);
         }
         window.draw(instructions);
-        window.draw(lines);
+        //window.draw(lines);
         window.draw(playerDot);
         window.draw(playerDot2);
         window.draw(lastTurnText);
