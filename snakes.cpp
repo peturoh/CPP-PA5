@@ -1,23 +1,25 @@
-// #include <SFML/Graphics.hpp>
 #include <SFML/Graphics.hpp>
 #include <chrono>
 #include <iostream>
 
-//prufaprufa
 using namespace std;
 
 
 int snakes(int position){
     if(position == 97){
+    	sf::sleep(sf::milliseconds(500));
         return 60;
     }
     else if(position == 75){
+    	sf::sleep(sf::milliseconds(500));
         return 2;
     }
     else if(position == 67){
+    	sf::sleep(sf::milliseconds(500));
         return 47;
     }
     else if(position == 59){
+    	sf::sleep(sf::milliseconds(500));
         return 17;
     }
     return position;
@@ -25,26 +27,36 @@ int snakes(int position){
 
 int ladders(int position){
     if(position == 21){
+    	sf::sleep(sf::milliseconds(500));
         return 99;
     }
     else if(position == 14){
+    	sf::sleep(sf::milliseconds(500));
         return 46;
     }
     else if(position == 30){
+    	sf::sleep(sf::milliseconds(500));
         return 71;
     }
     return position;
 }
 
+void drawPlayer(sf::RenderWindow& window, sf::CircleShape& playerDot, sf::RectangleShape* squares, const int squareSize, int playerPosition) {
+    sf::Vector2f newPosition = squares[playerPosition].getPosition() + sf::Vector2f(squareSize / 2.f, squareSize / 2.f);
+    playerDot.setPosition(newPosition);
+    window.draw(playerDot);
+    window.display();
+}
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(500, 500), "Snakes and Ladders");
+    sf::RenderWindow window(sf::VideoMode(500, 600), "Snakes and Ladders");
 	srand(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
     const int numRows = 10;
     const int numCols = 10;
     const int numSquares = numRows*numCols;
     const int squareSize = 50;
+	
     sf::RectangleShape squares[numSquares];
     for (int i = 0; i < numSquares; i++) {
         int row = numRows - 1 - i / numCols; 
@@ -76,9 +88,22 @@ int main()
         numbers[i].setPosition(squares[i].getPosition().x + squareSize / 2.f,
                                 squares[i].getPosition().y + squareSize / 2.f);
     }
+    
+    sf::Text instructions;
+    instructions.setFont(font);
+    instructions.setString("Press R to roll for Player 1\nPress P to roll for Player 2");
+    instructions.setCharacterSize(16);
+    instructions.setFillColor(sf::Color::White);
+    instructions.setPosition(10, 500);
+    
+    sf::Text lastTurnText("", font, 16);
+	lastTurnText.setPosition(10, 536);
+	lastTurnText.setFillColor(sf::Color::White);
+	
+	sf::Text teleportText("", font, 16);
+	teleportText.setPosition(10, 552);
+	teleportText.setFillColor(sf::Color::White);
 
-    //TODO: gera línur breiðari.
-    //      fleiri stigar og snákar.
     sf::VertexArray lines(sf::Lines, 14); 
     lines[0].position = sf::Vector2f(squares[2].getPosition().x + squareSize / 2.f,
                                      squares[2].getPosition().y + squareSize / 2.f);
@@ -126,7 +151,6 @@ int main()
     lines[12].color = sf::Color::Green;
     lines[13].color = sf::Color::Green;
 
-    //TODO: multiplayer??
     sf::CircleShape playerDot(squareSize / 6.f);
     playerDot.setFillColor(sf::Color::Blue);
     playerDot.setPosition(squares[0].getPosition().x + squareSize / 2.f,
@@ -145,6 +169,8 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
+        	string lastTurnInfo;
+        	string teleportInfo;
             if (event.type == sf::Event::Closed)
                 window.close();
 
@@ -153,45 +179,68 @@ int main()
                 int diceRoll = std::rand() % 6 + 1; 
                 cout << "DICEROLL: " << diceRoll << endl;
                 playerPosition += diceRoll; 
+                lastTurnInfo = "Player 1 rolled a " + to_string(diceRoll) + " and landed on square " + to_string(playerPosition+1) + ".";
                 if(playerPosition > 99){
-                    int newPlayerPos = playerPosition - 100;
-                    playerPosition = 99 - newPlayerPos;
+                    playerPosition = 99;
                 }
                 else if(playerPosition == 97 ||playerPosition == 75 ||playerPosition == 67 ||playerPosition == 59){
                     cout << "SNAKES: " << playerPosition +1 << endl;
+					drawPlayer(window, playerDot, squares, squareSize, playerPosition);
                     playerPosition = snakes(playerPosition);   
+                    teleportInfo = "OOPS! Player 1 slid down a snake and ended up on square " + to_string(playerPosition+1) + ".";
                 }
                 else if(playerPosition == 14 ||playerPosition == 21 ||playerPosition == 30){
                     cout << "LADDERS: " << playerPosition +1 << endl;
-                    playerPosition = ladders(playerPosition);   
+                    drawPlayer(window, playerDot, squares, squareSize, playerPosition);
+                    playerPosition = ladders(playerPosition); 
+                    teleportInfo = "YAY! Player 1 hit a ladder and climbed up to square " + to_string(playerPosition+1) + ".";  
                 }
                 if(playerPosition == 99){
+                	drawPlayer(window, playerDot, squares, squareSize, playerPosition);
+                	sf::Text message("Player 1 won!", font, 36);
+					message.setFillColor(sf::Color::Red);
+					message.setPosition(150,220);
+					window.draw(message);
+					window.display();
+					sf::sleep(sf::milliseconds(3000));
                     window.close();
                 }
-
+				lastTurnText.setString(lastTurnInfo);
+				teleportText.setString(teleportInfo);
                 sf::Vector2f newPosition = squares[playerPosition].getPosition() + sf::Vector2f(squareSize / 2.f, squareSize / 2.f);
                 playerDot.setPosition(newPosition);
             }
             //move player2
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P) {
                 int diceRoll2 = std::rand() % 6 + 1; 
-                player2Position += diceRoll2; 
+                player2Position += diceRoll2;
+                lastTurnInfo = "Player 2 rolled a " + to_string(diceRoll2) + " and landed on square " + to_string(player2Position+1) + ".";
                 if(player2Position > 99){
-                    int newPlayer2Pos = player2Position - 100;
-                    player2Position = 99 - newPlayer2Pos;
+                    player2Position = 99;
                 }
                 else if(player2Position == 97 ||player2Position == 75 ||player2Position == 67 ||player2Position == 59){
                     cout << "SNAKES p2: " << player2Position +1 << endl;
-                    player2Position = snakes(player2Position);   
+                    drawPlayer(window, playerDot2, squares, squareSize, player2Position);
+                    player2Position = snakes(player2Position);
+                    teleportInfo = "OOPS! Player 2 slid down a snake and ended up on square " + to_string(player2Position+1) + ".";
                 }
                 else if(player2Position == 14 || player2Position == 21 ||player2Position == 30){
                     cout << "LADDERS p2: " << playerPosition +1 << endl;
+                    drawPlayer(window, playerDot2, squares, squareSize, player2Position);
                     player2Position = ladders(player2Position);   
+                    teleportInfo = "YAY! Player 2 hit a ladder and climbed up to square " + to_string(player2Position+1) + ".";  
                 }
                 if(player2Position == 99){
+                	drawPlayer(window, playerDot2, squares, squareSize, player2Position);
+                	sf::Text message("Player 2 won!", font, 36);
+					message.setFillColor(sf::Color::Red);
+					message.setPosition(150, 220);
+					window.draw(message);
+					window.display();
                     window.close();
                 }
-
+				lastTurnText.setString(lastTurnInfo);
+				teleportText.setString(teleportInfo);
                 sf::Vector2f new2Position = squares[player2Position].getPosition() + sf::Vector2f(squareSize / 2.f, squareSize / 2.f);
                 playerDot2.setPosition(new2Position);
             }
@@ -203,9 +252,12 @@ int main()
             window.draw(squares[i]);
             window.draw(numbers[i]);
         }
+        window.draw(instructions);
         window.draw(lines);
         window.draw(playerDot);
         window.draw(playerDot2);
+        window.draw(lastTurnText);
+        window.draw(teleportText);
         window.display();
     }
 
