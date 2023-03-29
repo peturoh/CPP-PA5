@@ -170,6 +170,20 @@ int main()
     int player2Position = 0;
 
 
+    // Play again or quit text
+    // sf::Text continue_message("Press C to continue \n       or Q to quit.", font, 36);
+    // continue_message.setFillColor(sf::Color::Red);
+    // continue_message.setPosition(100,300);
+
+    // Victory background
+    sf::RectangleShape victory_background(sf::Vector2f(350, 100));
+    victory_background.setPosition(80, 200);
+    sf::Color transparent_black(0,0,0,220);
+    victory_background.setFillColor(transparent_black);
+    
+
+   
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -206,6 +220,7 @@ int main()
                 	sf::Text message("Player 1 won!", font, 36);
 					message.setFillColor(sf::Color::Blue);
 					message.setPosition(150,220);
+                    window.draw(victory_background);
 					window.draw(message);
 					window.display();
 					sf::sleep(sf::milliseconds(3000));
@@ -241,6 +256,7 @@ int main()
                 	sf::Text message("Player 2 won!", font, 36);
 					message.setFillColor(sf::Color::Blue);
 					message.setPosition(150, 220);
+                    window.draw(victory_background);
 					window.draw(message);
 					window.display();
                     sf::sleep(sf::milliseconds(3000));
