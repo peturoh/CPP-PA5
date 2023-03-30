@@ -56,6 +56,7 @@ int main()
     const int numCols = 10;
     const int numSquares = numRows*numCols;
     const int squareSize = 50;
+    bool spriteSuccess = false;
 	
     sf::RectangleShape squares[numSquares];
     for (int i = 0; i < numSquares; i++) {
@@ -70,11 +71,12 @@ int main()
         }
     }
   
+  	sf::Sprite boardSprite;
     sf::Texture texture;
-    texture.loadFromFile("assets/snakesladders.png");
-    
-    sf::Sprite boardSprite;
-    boardSprite.setTexture(texture);
+    if (texture.loadFromFile("assets/snakesladders.png")) {
+    	boardSprite.setTexture(texture);
+    	spriteSuccess = true;
+    };
 
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
@@ -268,11 +270,14 @@ int main()
             window.draw(squares[i]);
         }
         window.draw(boardSprite);
+        // Draws lines instead of snakes and ladders if sprite loading fails.
+        if (!spriteSuccess) {
+        	window.draw(lines);
+        }
         for (int i = 0; i < numSquares; i++) {
             window.draw(numbers[i]);
         }
         window.draw(instructions);
-        //window.draw(lines);
         window.draw(playerDot);
         window.draw(playerDot2);
         window.draw(lastTurnText);
