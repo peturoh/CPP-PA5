@@ -170,11 +170,6 @@ int main()
     int player2Position = 0;
 
 
-    // Play again or quit text
-    // sf::Text continue_message("Press C to continue \n       or Q to quit.", font, 36);
-    // continue_message.setFillColor(sf::Color::Red);
-    // continue_message.setPosition(100,300);
-
     // Victory background
     sf::RectangleShape victory_background(sf::Vector2f(350, 100));
     victory_background.setPosition(80, 200);
@@ -197,7 +192,6 @@ int main()
             // Move the player1
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
                 int diceRoll = std::rand() % 6 + 1; 
-                cout << "DICEROLL: " << diceRoll << endl;
                 playerPosition += diceRoll; 
                 lastTurnInfo = "Player 1 rolled a " + to_string(diceRoll) + " and landed on square " + to_string(playerPosition+1) + ".";
                 if(playerPosition > 99){
@@ -218,7 +212,7 @@ int main()
                 if(playerPosition == 99){
                 	drawPlayer(window, playerDot, squares, squareSize, playerPosition);
                 	sf::Text message("Player 1 won!", font, 36);
-					message.setFillColor(sf::Color::Blue);
+					message.setFillColor(sf::Color::White);
 					message.setPosition(150,220);
                     window.draw(victory_background);
 					window.draw(message);
@@ -254,7 +248,7 @@ int main()
                 if(player2Position == 99){
                 	drawPlayer(window, playerDot2, squares, squareSize, player2Position);
                 	sf::Text message("Player 2 won!", font, 36);
-					message.setFillColor(sf::Color::Blue);
+					message.setFillColor(sf::Color::White);
 					message.setPosition(150, 220);
                     window.draw(victory_background);
 					window.draw(message);
